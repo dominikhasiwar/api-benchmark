@@ -1,0 +1,217 @@
+definitions:
+  ImportResponse:
+    properties:
+      importedUsers:
+        type: integer
+    type: object
+  SaveUser:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      phoneNumber:
+        type: string
+      street:
+        type: string
+      userName:
+        type: string
+      zip:
+        type: string
+    required:
+    - firstName
+    - userName
+    type: object
+  User:
+    properties:
+      city:
+        type: string
+      country:
+        type: string
+      created:
+        type: string
+      creator:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      lastName:
+        type: string
+      modified:
+        type: string
+      modifier:
+        type: string
+      phoneNumber:
+        type: string
+      street:
+        type: string
+      userName:
+        type: string
+      zip:
+        type: string
+    type: object
+info:
+  contact: {}
+  title: Go Demo API
+  version: "1.0"
+paths:
+  /user:
+    get:
+      description: Retrieve a list of all users
+      parameters:
+      - description: Last evaluated key
+        in: query
+        name: lastEvaluatedKey
+        type: string
+      - description: text search query
+        in: query
+        name: textQuery
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/User'
+            type: array
+      security:
+      - OAuth2Implicit: []
+      summary: Get All Users
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: Create User Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/SaveUser'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created
+          schema:
+            $ref: '#/definitions/User'
+      security:
+      - OAuth2Implicit: []
+      summary: Create User
+      tags:
+      - Users
+  /user/{id}:
+    delete:
+      description: Delete an existing user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+      security:
+      - OAuth2Implicit: []
+      summary: Delete User
+      tags:
+      - Users
+    get:
+      description: Retrieve a specific user by ID
+      parameters:
+      - description: Users ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+      security:
+      - OAuth2Implicit: []
+      summary: Get User by ID
+      tags:
+      - Users
+    put:
+      consumes:
+      - application/json
+      description: Update a new user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Update User Request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/SaveUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully created
+          schema:
+            $ref: '#/definitions/User'
+      security:
+      - OAuth2Implicit: []
+      summary: Update User
+      tags:
+      - Users
+  /user/import:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Imports users from a excel file
+      parameters:
+      - description: Excel file to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Password used to protect the Excel file (option)
+        in: query
+        name: password
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/ImportResponse'
+            type: array
+      security:
+      - OAuth2Implicit: []
+      summary: Import users
+      tags:
+      - Users
+securityDefinitions:
+  OAuth2Implicit:
+    authorizationUrl: '{{auth_authorization_url}}'
+    flow: implicit
+    scopes:
+      '{{auth_scope}}': Access API
+    type: oauth2
+swagger: "2.0"
